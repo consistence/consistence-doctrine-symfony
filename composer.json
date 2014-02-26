@@ -1,0 +1,13 @@
+{
+	"name": "consistence/consistence-doctrine-symfony",
+	"description": "Symfony Bundle integrating Consistence library with Doctrine ORM",
+	"keywords": ["consistence", "doctrine", "orm", "symfony", "bundle"],
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Vašek Purchart",
+			"email": "me@vasekpurchart.cz",
+			"homepage": "http://vasekpurchart.cz"
+		}
+	]
+}
