@@ -10,12 +10,30 @@
 			"homepage": "http://vasekpurchart.cz"
 		}
 	],
+	"require": {
+		"symfony/config": "~2.6|~3.0",
+		"symfony/dependency-injection": "~2.6|~3.0",
+		"symfony/http-kernel": "~2.6|~3.0",
+		"symfony/yaml": "~2.6|~3.0"
+	},
 	"require-dev": {
 		"consistence/coding-standard": "0.12",
 		"jakub-onderka/php-console-highlighter": "0.3.2",
 		"jakub-onderka/php-parallel-lint": "0.9.2",
 		"phing/phing": "2.16",
 		"phpunit/phpunit": "5.7.5"
+	},
+	"autoload": {
+		"psr-4": {
+			"Consistence\\Doctrine\\SymfonyBundle\\": "src"
+		},
+		"classmap": [ "src" ]
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Consistence\\Doctrine\\SymfonyBundle\\": "tests"
+		},
+		"classmap": [ "tests" ]
 	},
 	"config": {
 		"bin-dir": "bin"
