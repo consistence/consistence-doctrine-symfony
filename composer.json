@@ -11,6 +11,7 @@
 		}
 	],
 	"require": {
+		"consistence/consistence-doctrine": "~0.6",
 		"symfony/config": "~2.6|~3.0",
 		"symfony/dependency-injection": "~2.6|~3.0",
 		"symfony/http-kernel": "~2.6|~3.0",
