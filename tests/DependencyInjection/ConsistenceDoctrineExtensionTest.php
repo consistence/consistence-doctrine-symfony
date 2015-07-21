@@ -2,6 +2,7 @@
 
 namespace Consistence\Doctrine\SymfonyBundle\DependencyInjection;
 
+use Consistence\Doctrine\Enum\EnumPostLoadEntityListener;
 use Consistence\Doctrine\Enum\Type\FloatEnumType;
 use Consistence\Doctrine\Enum\Type\IntegerEnumType;
 use Consistence\Doctrine\Enum\Type\StringEnumType;
@@ -33,6 +34,16 @@ class ConsistenceDoctrineExtensionTest extends \PHPUnit\Framework\TestCase
 	{
 		$types = $this->getDoctrineTypesConfig();
 		$this->assertTypes(self::$enumTypes, $types);
+	}
+
+	public function testRegisterPostLoadEntityListener()
+	{
+		$containerBuilder = new ContainerBuilder();
+		$extension = new ConsistenceDoctrineExtension();
+		$extension->load([], $containerBuilder);
+
+		$this->assertTrue($containerBuilder->has('consistence.doctrine.enum.enum_post_load_entity_listener'));
+		$this->assertEquals(EnumPostLoadEntityListener::class, $containerBuilder->getDefinition('consistence.doctrine.enum.enum_post_load_entity_listener')->getClass());
 	}
 
 	/**
