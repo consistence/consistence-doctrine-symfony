@@ -1,0 +1,7 @@
+services:
+    consistence.doctrine.enum.enum_post_load_entity_listener:
+        class: Consistence\Doctrine\Enum\EnumPostLoadEntityListener
+        arguments:
+            - '@annotation_reader'
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
