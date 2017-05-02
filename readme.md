@@ -97,7 +97,7 @@ $user = new User(
 	Sex::get(Sex::FEMALE)
 	// ...
 );
-/** @var $entityManager \Doctrine\ORM\EntityManager */
+/** @var \Doctrine\ORM\EntityManager $entityManager */
 $entityManager->persist($user);
 
 // when persisting User::$sex to database, `female` will be saved
@@ -111,7 +111,7 @@ And when you retrieve the entity back from database, you will receive the `Sex` 
 
 namespace Consistence\Doctrine\Example\User;
 
-/** @var $entityManager \Doctrine\ORM\EntityManager */
+/** @var \Doctrine\ORM\EntityManager $entityManager */
 $user = $entityManager->find(User::class, 1);
 var_dump($user->getSex());
 

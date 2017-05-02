@@ -8,9 +8,7 @@ use Consistence\Doctrine\Enum\EnumPostLoadEntityListener;
 use Consistence\Doctrine\Enum\Type\FloatEnumType;
 use Consistence\Doctrine\Enum\Type\IntegerEnumType;
 use Consistence\Doctrine\Enum\Type\StringEnumType;
-
 use Doctrine\Bundle\DoctrineBundle\DependencyInjection\DoctrineExtension;
-
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class ConsistenceDoctrineExtensionTest extends \PHPUnit\Framework\TestCase
