@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Consistence\Doctrine\SymfonyBundle\DependencyInjection;
 
 use Consistence\Doctrine\Enum\Type\FloatEnumType;
@@ -46,10 +48,7 @@ class ConsistenceDoctrineExtension
 		$loader->load('services.yml');
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getAlias()
+	public function getAlias(): string
 	{
 		return self::ALIAS;
 	}

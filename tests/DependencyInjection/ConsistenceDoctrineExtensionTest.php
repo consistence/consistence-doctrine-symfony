@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Consistence\Doctrine\SymfonyBundle\DependencyInjection;
 
 use Consistence\Doctrine\Enum\EnumPostLoadEntityListener;
@@ -49,7 +51,7 @@ class ConsistenceDoctrineExtensionTest extends \PHPUnit\Framework\TestCase
 	/**
 	 * @return string[] format: type name (string) => type class)
 	 */
-	private function getDoctrineTypesConfig()
+	private function getDoctrineTypesConfig(): array
 	{
 		$doctrineExtension = new DoctrineExtension();
 		$extension = new ConsistenceDoctrineExtension();
