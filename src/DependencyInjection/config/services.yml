@@ -3,5 +3,11 @@ services:
         class: Consistence\Doctrine\Enum\EnumPostLoadEntityListener
         arguments:
             - '@annotation_reader'
+            - '@consistence.doctrine.enum.enum_fields_cache'
         tags:
             - { name: doctrine.event_listener, event: postLoad }
+
+    consistence.doctrine.enum.enum_fields_cache: '@consistence.doctrine.enum.enum_fields_cache_default'
+
+    consistence.doctrine.enum.enum_fields_cache_default:
+        class: Doctrine\Common\Cache\ArrayCache

@@ -127,6 +127,21 @@ class Consistence\Doctrine\Example\User\Sex#5740 (1) {
 
 This means that the objects API is symmetrical (you get the same type as you set) and you can start benefiting from [Enums](https://github.com/consistence/consistence/blob/master/docs/Enum/enums.md) advantages such as being sure, that what you get is already a valid value and having the possibility to define methods on top of the represented values.
 
+Configuration
+-------------
+
+You can override services used internally, for example if you want to use a more effective cache in production (which is recommended), you can provide custom instance with an [alias](http://symfony.com/doc/current/components/dependency_injection/advanced.html#aliasing):
+
+```yaml
+services:
+    mycache:
+        class: Doctrine\Common\Cache\FilesystemCache
+        arguments:
+            - '%kernel.cache_dir%/mycache'
+
+    consistence.doctrine.enum.enum_fields_cache: '@mycache'
+```
+
 Installation
 ------------
 
