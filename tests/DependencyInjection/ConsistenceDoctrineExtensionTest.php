@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Consistence\Doctrine\SymfonyBundle\DependencyInjection;
 
 use Consistence\Doctrine\Enum\EnumPostLoadEntityListener;
+use Consistence\Doctrine\Enum\Type\BooleanEnumType;
 use Consistence\Doctrine\Enum\Type\FloatEnumType;
 use Consistence\Doctrine\Enum\Type\IntegerEnumType;
 use Consistence\Doctrine\Enum\Type\StringEnumType;
@@ -16,6 +17,7 @@ class ConsistenceDoctrineExtensionTest extends \PHPUnit\Framework\TestCase
 
 	/** @var string[] */
 	private static $enumTypes = [
+		BooleanEnumType::NAME => BooleanEnumType::class,
 		FloatEnumType::NAME => FloatEnumType::class,
 		IntegerEnumType::NAME => IntegerEnumType::class,
 		StringEnumType::NAME => StringEnumType::class,

@@ -36,7 +36,7 @@ Now you can use the `Sex` enum in your `User` entity. There are two important th
 
 You can specify any other parameters for `ORM\Column` as you would usually (nullability, length...).
 
-There is also `integer_enum` and `float_enum` which can be used respectively for their types.
+There is also `integer_enum`, `float_enum` and `boolean_enum` which can be used respectively for their types.
 
 2) `@Enum(class=Sex::class)` - this will be used for reconstructing the `Sex`
  enum object when loading the value back from database
