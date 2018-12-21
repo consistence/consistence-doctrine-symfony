@@ -72,8 +72,8 @@ class ConsistenceDoctrineExtensionTest extends \PHPUnit\Framework\TestCase
 	}
 
 	/**
-	 * @param string[] $expectedTypes format: type name (string) => type class)
-	 * @param string[] $actualTypes format: type name (string) => type class)
+	 * @param string[] $expectedTypes format: type name (string) => type class
+	 * @param string[] $actualTypes format: type name (string) => type class
 	 */
 	private function assertTypes(array $expectedTypes, array $actualTypes): void
 	{
