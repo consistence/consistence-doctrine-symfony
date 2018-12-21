@@ -23,7 +23,7 @@ class ConsistenceDoctrineExtensionTest extends \PHPUnit\Framework\TestCase
 		StringEnumType::NAME => StringEnumType::class,
 	];
 
-	public function testDependsOnDoctrineBundle()
+	public function testDependsOnDoctrineBundle(): void
 	{
 		$containerBuilder = new ContainerBuilder();
 		$extension = new ConsistenceDoctrineExtension();
@@ -32,13 +32,13 @@ class ConsistenceDoctrineExtensionTest extends \PHPUnit\Framework\TestCase
 		$extension->prepend($containerBuilder);
 	}
 
-	public function testRegisterEnumTypes()
+	public function testRegisterEnumTypes(): void
 	{
 		$types = $this->getDoctrineTypesConfig();
 		$this->assertTypes(self::$enumTypes, $types);
 	}
 
-	public function testRegisterPostLoadEntityListener()
+	public function testRegisterPostLoadEntityListener(): void
 	{
 		$containerBuilder = new ContainerBuilder();
 		$extension = new ConsistenceDoctrineExtension();
@@ -75,7 +75,7 @@ class ConsistenceDoctrineExtensionTest extends \PHPUnit\Framework\TestCase
 	 * @param string[] $expectedTypes format: type name (string) => type class)
 	 * @param string[] $actualTypes format: type name (string) => type class)
 	 */
-	private function assertTypes(array $expectedTypes, array $actualTypes)
+	private function assertTypes(array $expectedTypes, array $actualTypes): void
 	{
 		foreach ($expectedTypes as $typeName => $typeClass) {
 			$this->assertArraySubset([$typeName => $typeClass], $actualTypes);

@@ -17,11 +17,11 @@ class ConsistenceDoctrineExtension
 	implements \Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface
 {
 
-	const ALIAS = 'consistence_doctrine';
+	public const ALIAS = 'consistence_doctrine';
 
-	const DOCTRINE_BUNDLE_ALIAS = 'doctrine';
+	public const DOCTRINE_BUNDLE_ALIAS = 'doctrine';
 
-	public function prepend(ContainerBuilder $container)
+	public function prepend(ContainerBuilder $container): void
 	{
 		if (!$container->hasExtension(self::DOCTRINE_BUNDLE_ALIAS)) {
 			throw new \Consistence\Doctrine\SymfonyBundle\DependencyInjection\DoctrineBundleRequiredException();
@@ -43,7 +43,7 @@ class ConsistenceDoctrineExtension
 	 * @param mixed[][] $configs
 	 * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
 	 */
-	public function load(array $configs, ContainerBuilder $container)
+	public function load(array $configs, ContainerBuilder $container): void
 	{
 		$loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/config'));
 		$loader->load('services.yml');
