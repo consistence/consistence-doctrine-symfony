@@ -151,17 +151,14 @@ Installation
 composer require consistence/consistence-doctrine-symfony
 ```
 
-2) Register the bundle in your application kernel:
+2) Register the bundle in your application:
 
 ```php
-// app/AppKernel.php
-public function registerBundles()
-{
-	return [
-		// ...
-		new Consistence\Doctrine\SymfonyBundle\ConsistenceDoctrineBundle(),
-	];
-}
+// config/bundles.php
+return [
+	// ...
+	Consistence\Doctrine\SymfonyBundle\ConsistenceDoctrineBundle::class => ['all' => true],
+];
 ```
 
 That's all, you are good to go!
