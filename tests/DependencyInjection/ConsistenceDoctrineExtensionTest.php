@@ -9,6 +9,8 @@ use Consistence\Doctrine\Enum\Type\BooleanEnumType;
 use Consistence\Doctrine\Enum\Type\FloatEnumType;
 use Consistence\Doctrine\Enum\Type\IntegerEnumType;
 use Consistence\Doctrine\Enum\Type\StringEnumType;
+use Consistence\Type\ArrayType\ArrayType;
+use Consistence\Type\ArrayType\KeyValuePair;
 use Doctrine\Bundle\DoctrineBundle\DependencyInjection\DoctrineExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -78,7 +80,13 @@ class ConsistenceDoctrineExtensionTest extends \PHPUnit\Framework\TestCase
 	private function assertTypes(array $expectedTypes, array $actualTypes): void
 	{
 		foreach ($expectedTypes as $typeName => $typeClass) {
-			$this->assertArraySubset([$typeName => $typeClass], $actualTypes);
+			$this->assertTrue(ArrayType::containsByCallback(
+				$actualTypes,
+				static function (KeyValuePair $keyValuePair) use ($typeName, $typeClass): bool {
+					return $keyValuePair->getKey() === $typeName
+						&& $keyValuePair->getValue() === $typeClass;
+				}
+			), sprintf('Expected type name: %s, class: %s missing', $typeName, $typeClass));
 		}
 		$this->assertCount(count($expectedTypes), $actualTypes);
 	}
