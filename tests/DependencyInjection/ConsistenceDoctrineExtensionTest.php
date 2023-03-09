@@ -48,7 +48,7 @@ class ConsistenceDoctrineExtensionTest extends \PHPUnit\Framework\TestCase
 		$extension->load([], $containerBuilder);
 
 		Assert::assertTrue($containerBuilder->has('consistence.doctrine.enum.enum_post_load_entity_listener'));
-		Assert::assertEquals(EnumPostLoadEntityListener::class, $containerBuilder->getDefinition('consistence.doctrine.enum.enum_post_load_entity_listener')->getClass());
+		Assert::assertSame(EnumPostLoadEntityListener::class, $containerBuilder->getDefinition('consistence.doctrine.enum.enum_post_load_entity_listener')->getClass());
 	}
 
 	/**
