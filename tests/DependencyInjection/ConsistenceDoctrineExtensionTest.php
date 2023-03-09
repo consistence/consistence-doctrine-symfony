@@ -12,6 +12,7 @@ use Consistence\Doctrine\Enum\Type\StringEnumType;
 use Consistence\Type\ArrayType\ArrayType;
 use Consistence\Type\ArrayType\KeyValuePair;
 use Doctrine\Bundle\DoctrineBundle\DependencyInjection\DoctrineExtension;
+use PHPUnit\Framework\Assert;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class ConsistenceDoctrineExtensionTest extends \PHPUnit\Framework\TestCase
@@ -46,8 +47,8 @@ class ConsistenceDoctrineExtensionTest extends \PHPUnit\Framework\TestCase
 		$extension = new ConsistenceDoctrineExtension();
 		$extension->load([], $containerBuilder);
 
-		$this->assertTrue($containerBuilder->has('consistence.doctrine.enum.enum_post_load_entity_listener'));
-		$this->assertEquals(EnumPostLoadEntityListener::class, $containerBuilder->getDefinition('consistence.doctrine.enum.enum_post_load_entity_listener')->getClass());
+		Assert::assertTrue($containerBuilder->has('consistence.doctrine.enum.enum_post_load_entity_listener'));
+		Assert::assertEquals(EnumPostLoadEntityListener::class, $containerBuilder->getDefinition('consistence.doctrine.enum.enum_post_load_entity_listener')->getClass());
 	}
 
 	/**
@@ -80,7 +81,7 @@ class ConsistenceDoctrineExtensionTest extends \PHPUnit\Framework\TestCase
 	private function assertTypes(array $expectedTypes, array $actualTypes): void
 	{
 		foreach ($expectedTypes as $typeName => $typeClass) {
-			$this->assertTrue(ArrayType::containsByCallback(
+			Assert::assertTrue(ArrayType::containsByCallback(
 				$actualTypes,
 				static function (KeyValuePair $keyValuePair) use ($typeName, $typeClass): bool {
 					return $keyValuePair->getKey() === $typeName
@@ -88,7 +89,7 @@ class ConsistenceDoctrineExtensionTest extends \PHPUnit\Framework\TestCase
 				}
 			), sprintf('Expected type name: %s, class: %s missing', $typeName, $typeClass));
 		}
-		$this->assertCount(count($expectedTypes), $actualTypes);
+		Assert::assertCount(count($expectedTypes), $actualTypes);
 	}
 
 }
