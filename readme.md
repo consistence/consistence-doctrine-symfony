@@ -137,7 +137,7 @@ services:
     mycache:
         class: 'Doctrine\Common\Cache\FilesystemCache'
         arguments:
-            - '%kernel.cache_dir%/mycache'
+            $directory: '%kernel.cache_dir%/mycache'
 
     consistence.doctrine.enum.enum_fields_cache: '@mycache'
 ```
