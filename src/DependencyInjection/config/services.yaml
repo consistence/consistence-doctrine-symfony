@@ -5,7 +5,9 @@ services:
             - '@annotation_reader'
             - '@consistence.doctrine.enum.enum_fields_cache'
         tags:
-            - { name: doctrine.event_listener, event: postLoad }
+            -
+                name: doctrine.event_listener
+                event: postLoad
 
     consistence.doctrine.enum.enum_fields_cache: '@consistence.doctrine.enum.enum_fields_cache_default'
 
