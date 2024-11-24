@@ -135,7 +135,7 @@ You can override services used internally, for example if you want to use a more
 ```yaml
 services:
     mycache:
-        class: Doctrine\Common\Cache\FilesystemCache
+        class: 'Doctrine\Common\Cache\FilesystemCache'
         arguments:
             - '%kernel.cache_dir%/mycache'
 
