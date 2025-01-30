@@ -4,92 +4,368 @@ declare(strict_types = 1);
 
 namespace Consistence\Doctrine\SymfonyBundle\DependencyInjection;
 
-use Consistence\Doctrine\Enum\EnumPostLoadEntityListener;
-use Consistence\Doctrine\Enum\Type\BooleanEnumType;
-use Consistence\Doctrine\Enum\Type\FloatEnumType;
-use Consistence\Doctrine\Enum\Type\IntegerEnumType;
-use Consistence\Doctrine\Enum\Type\StringEnumType;
-use Consistence\Type\ArrayType\ArrayType;
-use Consistence\Type\ArrayType\KeyValuePair;
-use Doctrine\Bundle\DoctrineBundle\DependencyInjection\DoctrineExtension;
+use Consistence\Doctrine\SymfonyBundle\FooBooleanEnum;
+use Consistence\Doctrine\SymfonyBundle\FooFloatEnum;
+use Consistence\Doctrine\SymfonyBundle\FooIntegerEnum;
+use Consistence\Doctrine\SymfonyBundle\FooStringEnum;
+use DateTimeImmutable;
+use Generator;
 use PHPUnit\Framework\Assert;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class ConsistenceDoctrineExtensionTest extends \PHPUnit\Framework\TestCase
 {
 
-	/** @var string[] */
-	private static $enumTypes = [
-		BooleanEnumType::NAME => BooleanEnumType::class,
-		FloatEnumType::NAME => FloatEnumType::class,
-		IntegerEnumType::NAME => IntegerEnumType::class,
-		StringEnumType::NAME => StringEnumType::class,
-	];
-
-	public function testDependsOnDoctrineBundle(): void
+	/**
+	 * @return mixed[][]|\Generator
+	 */
+	public function registerDbalTypesDataProvider(): Generator
 	{
-		$containerBuilder = new ContainerBuilder();
-		$extension = new ConsistenceDoctrineExtension();
+		yield 'empty configuration' => [
+			'configuration' => [],
+			'expectedBooleanEnumClasses' => [],
+			'expectedFloatEnumClasses' => [],
+			'expectedIntegerEnumClasses' => [],
+			'expectedStringEnumClasses' => [],
+		];
 
-		$this->expectException(\Consistence\Doctrine\SymfonyBundle\DependencyInjection\DoctrineBundleRequiredException::class);
-		$extension->prepend($containerBuilder);
-	}
+		yield 'empty enum configuration' => [
+			'configuration' => [
+				'enum' => [],
+			],
+			'expectedBooleanEnumClasses' => [],
+			'expectedFloatEnumClasses' => [],
+			'expectedIntegerEnumClasses' => [],
+			'expectedStringEnumClasses' => [],
+		];
 
-	public function testRegisterEnumTypes(): void
-	{
-		$types = $this->getDoctrineTypesConfig();
-		$this->assertTypes(self::$enumTypes, $types);
-	}
+		yield 'empty enum.dbal_types configuration' => [
+			'configuration' => [
+				'enum' => [
+					'dbal_types' => [],
+				],
+			],
+			'expectedBooleanEnumClasses' => [],
+			'expectedFloatEnumClasses' => [],
+			'expectedIntegerEnumClasses' => [],
+			'expectedStringEnumClasses' => [],
+		];
 
-	public function testRegisterPostLoadEntityListener(): void
-	{
-		$containerBuilder = new ContainerBuilder();
-		$extension = new ConsistenceDoctrineExtension();
-		$extension->load([], $containerBuilder);
+		yield 'register only one type' => [
+			'configuration' => [
+				'enum' => [
+					'dbal_types' => [
+						'integer' => [
+							FooIntegerEnum::class,
+						],
+					],
+				],
+			],
+			'expectedBooleanEnumClasses' => [],
+			'expectedFloatEnumClasses' => [],
+			'expectedIntegerEnumClasses' => [
+				FooIntegerEnum::class,
+			],
+			'expectedStringEnumClasses' => [],
+		];
 
-		Assert::assertTrue($containerBuilder->has('consistence.doctrine.enum.enum_post_load_entity_listener'));
-		Assert::assertSame(EnumPostLoadEntityListener::class, $containerBuilder->getDefinition('consistence.doctrine.enum.enum_post_load_entity_listener')->getClass());
+		yield 'register all types' => [
+			'configuration' => [
+				'enum' => [
+					'dbal_types' => [
+						'boolean' => [
+							FooBooleanEnum::class,
+						],
+						'float' => [
+							FooFloatEnum::class,
+						],
+						'integer' => [
+							FooIntegerEnum::class,
+						],
+						'string' => [
+							FooStringEnum::class,
+						],
+					],
+				],
+			],
+			'expectedBooleanEnumClasses' => [
+				FooBooleanEnum::class,
+			],
+			'expectedFloatEnumClasses' => [
+				FooFloatEnum::class,
+			],
+			'expectedIntegerEnumClasses' => [
+				FooIntegerEnum::class,
+			],
+			'expectedStringEnumClasses' => [
+				FooStringEnum::class,
+			],
+		];
 	}
 
 	/**
-	 * @return string[] format: type name (string) => type class)
+	 * @dataProvider registerDbalTypesDataProvider
+	 *
+	 * @param mixed[] $configuration
+	 * @param string[] $expectedBooleanEnumClasses
+	 * @param string[] $expectedFloatEnumClasses
+	 * @param string[] $expectedIntegerEnumClasses
+	 * @param string[] $expectedStringEnumClasses
 	 */
-	private function getDoctrineTypesConfig(): array
+	public function testRegisterDbalTypes(
+		array $configuration,
+		array $expectedBooleanEnumClasses,
+		array $expectedFloatEnumClasses,
+		array $expectedIntegerEnumClasses,
+		array $expectedStringEnumClasses
+	): void
 	{
-		$doctrineExtension = new DoctrineExtension();
-		$extension = new ConsistenceDoctrineExtension();
+		$containerBuilder = self::createContainerBuilder($configuration);
 
-		$containerBuilder = new ContainerBuilder();
-		$containerBuilder->registerExtension($doctrineExtension);
-		$containerBuilder->registerExtension($extension);
+		self::assertContainerHasParameter($containerBuilder, 'consistence.doctrine.enum.dbal_types.boolean');
+		self::assertArraysContainExactlySameValues($expectedBooleanEnumClasses, $containerBuilder->getParameter('consistence.doctrine.enum.dbal_types.boolean'));
 
-		$extension->prepend($containerBuilder);
+		self::assertContainerHasParameter($containerBuilder, 'consistence.doctrine.enum.dbal_types.float');
+		self::assertArraysContainExactlySameValues($expectedFloatEnumClasses, $containerBuilder->getParameter('consistence.doctrine.enum.dbal_types.float'));
 
-		$doctrineConfig = $containerBuilder->getExtensionConfig($doctrineExtension->getAlias());
+		self::assertContainerHasParameter($containerBuilder, 'consistence.doctrine.enum.dbal_types.integer');
+		self::assertArraysContainExactlySameValues($expectedIntegerEnumClasses, $containerBuilder->getParameter('consistence.doctrine.enum.dbal_types.integer'));
 
-		if (!isset($doctrineConfig[0]) || !isset($doctrineConfig[0]['dbal']) || !isset($doctrineConfig[0]['dbal']['types'])) {
-			return [];
-		}
+		self::assertContainerHasParameter($containerBuilder, 'consistence.doctrine.enum.dbal_types.string');
+		self::assertArraysContainExactlySameValues($expectedStringEnumClasses, $containerBuilder->getParameter('consistence.doctrine.enum.dbal_types.string'));
 
-		return $containerBuilder->getExtensionConfig($doctrineExtension->getAlias())[0]['dbal']['types'];
+		$containerBuilder->compile();
 	}
 
 	/**
-	 * @param string[] $expectedTypes format: type name (string) => type class
-	 * @param string[] $actualTypes format: type name (string) => type class
+	 * @return mixed[][]|\Generator
 	 */
-	private function assertTypes(array $expectedTypes, array $actualTypes): void
+	public function enumDbalTypesClassListWithDuplicateClassesDataProvider(): Generator
 	{
-		foreach ($expectedTypes as $typeName => $typeClass) {
-			Assert::assertTrue(ArrayType::containsByCallback(
-				$actualTypes,
-				static function (KeyValuePair $keyValuePair) use ($typeName, $typeClass): bool {
-					return $keyValuePair->getKey() === $typeName
-						&& $keyValuePair->getValue() === $typeClass;
-				}
-			), sprintf('Expected type name: %s, class: %s missing', $typeName, $typeClass));
+		yield 'duplicate enum boolean class' => [
+			'configuration' => [
+				'enum' => [
+					'dbal_types' => [
+						'boolean' => [
+							FooBooleanEnum::class,
+							FooBooleanEnum::class,
+						],
+					],
+				],
+			],
+			'expectedDuplicateClasses' => [
+				FooBooleanEnum::class,
+			],
+		];
+
+		yield 'duplicate enum float class' => [
+			'configuration' => [
+				'enum' => [
+					'dbal_types' => [
+						'float' => [
+							FooFloatEnum::class,
+							FooFloatEnum::class,
+						],
+					],
+				],
+			],
+			'expectedDuplicateClasses' => [
+				FooFloatEnum::class,
+			],
+		];
+
+		yield 'duplicate enum integer class' => [
+			'configuration' => [
+				'enum' => [
+					'dbal_types' => [
+						'integer' => [
+							FooIntegerEnum::class,
+							FooIntegerEnum::class,
+						],
+					],
+				],
+			],
+			'expectedDuplicateClasses' => [
+				FooIntegerEnum::class,
+			],
+		];
+
+		yield 'duplicate enum string class' => [
+			'configuration' => [
+				'enum' => [
+					'dbal_types' => [
+						'string' => [
+							FooStringEnum::class,
+							FooStringEnum::class,
+						],
+					],
+				],
+			],
+			'expectedDuplicateClasses' => [
+				FooStringEnum::class,
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider enumDbalTypesClassListWithDuplicateClassesDataProvider
+	 *
+	 * @param mixed[] $configuration
+	 * @param string[] $expectedDuplicateClasses
+	 */
+	public function testEnumDbalTypesClassListWitDuplicateClasses(
+		array $configuration,
+		array $expectedDuplicateClasses
+	): void
+	{
+		try {
+			self::createContainerBuilder($configuration);
+
+			Assert::fail('Exception expected');
+		} catch (\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException $e) {
+			Assert::assertInstanceOf(
+				\Consistence\Doctrine\SymfonyBundle\DependencyInjection\EnumDbalTypesClassListCannotContainDuplicateClassesException::class,
+				$e->getPrevious()
+			);
+
+			foreach ($expectedDuplicateClasses as $expectedClass) {
+				Assert::assertContains($expectedClass, $e->getPrevious()->getDuplicateClasses());
+			}
+			Assert::assertCount(count($expectedDuplicateClasses), $e->getPrevious()->getDuplicateClasses());
 		}
-		Assert::assertCount(count($expectedTypes), $actualTypes);
+	}
+
+	/**
+	 * @return mixed[][]|\Generator
+	 */
+	public function enumDbalTypesClassListWithNotEnumClassesDataProvider(): Generator
+	{
+		yield 'duplicate enum boolean class' => [
+			'configuration' => [
+				'enum' => [
+					'dbal_types' => [
+						'boolean' => [
+							DateTimeImmutable::class,
+						],
+					],
+				],
+			],
+			'expectedDuplicateClasses' => [
+				DateTimeImmutable::class,
+			],
+		];
+
+		yield 'duplicate enum float class' => [
+			'configuration' => [
+				'enum' => [
+					'dbal_types' => [
+						'float' => [
+							DateTimeImmutable::class,
+						],
+					],
+				],
+			],
+			'expectedDuplicateClasses' => [
+				DateTimeImmutable::class,
+			],
+		];
+
+		yield 'duplicate enum integer class' => [
+			'configuration' => [
+				'enum' => [
+					'dbal_types' => [
+						'integer' => [
+							DateTimeImmutable::class,
+						],
+					],
+				],
+			],
+			'expectedDuplicateClasses' => [
+				DateTimeImmutable::class,
+			],
+		];
+
+		yield 'duplicate enum string class' => [
+			'configuration' => [
+				'enum' => [
+					'dbal_types' => [
+						'string' => [
+							DateTimeImmutable::class,
+						],
+					],
+				],
+			],
+			'expectedDuplicateClasses' => [
+				DateTimeImmutable::class,
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider enumDbalTypesClassListWithNotEnumClassesDataProvider
+	 *
+	 * @param mixed[] $configuration
+	 * @param string[] $expectedNotEnumClasses
+	 */
+	public function testEnumDbalTypesClassListWithNotEnumClasses(
+		array $configuration,
+		array $expectedNotEnumClasses
+	): void
+	{
+		try {
+			self::createContainerBuilder($configuration);
+
+			Assert::fail('Exception expected');
+		} catch (\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException $e) {
+			Assert::assertInstanceOf(
+				\Consistence\Doctrine\SymfonyBundle\DependencyInjection\EnumDbalTypesClassListCannotContainNonEnumClassesException::class,
+				$e->getPrevious()
+			);
+
+			foreach ($expectedNotEnumClasses as $expectedClass) {
+				Assert::assertContains($expectedClass, $e->getPrevious()->getNotEnumClasses());
+			}
+			Assert::assertCount(count($expectedNotEnumClasses), $e->getPrevious()->getNotEnumClasses());
+		}
+	}
+
+	/**
+	 * @param mixed[] $configuration
+	 * @return \Symfony\Component\DependencyInjection\ContainerBuilder
+	 */
+	private static function createContainerBuilder(array $configuration): ContainerBuilder
+	{
+		$configuration = [
+			'consistence_doctrine' => $configuration,
+		];
+
+		$containerBuilder = new ContainerBuilder();
+		$containerBuilder->registerExtension(new ConsistenceDoctrineExtension());
+
+		foreach ($containerBuilder->getExtensions() as $extension) {
+			$extension->load($configuration, $containerBuilder);
+		}
+
+		return $containerBuilder;
+	}
+
+	private static function assertContainerHasParameter(Container $container, string $parameterName): void
+	{
+		Assert::assertTrue($container->hasParameter($parameterName), sprintf('Container does not have parameter `%s`', $parameterName));
+	}
+
+	/**
+	 * @param mixed[] $expectedArray
+	 * @param mixed[] $actualArray
+	 */
+	private static function assertArraysContainExactlySameValues(array $expectedArray, array $actualArray): void
+	{
+		foreach ($expectedArray as $expectedArrayValue) {
+			Assert::assertContains($expectedArrayValue, $actualArray);
+		}
+
+		Assert::assertCount(count($expectedArray), $actualArray);
 	}
 
 }
