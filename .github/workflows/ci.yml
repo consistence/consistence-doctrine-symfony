@@ -140,6 +140,11 @@ jobs:
                     - '7.4'
                 symfony-version:
                     - '4.4'
+                    - '5.0'
+                    - '5.1'
+                    - '5.2'
+                    - '5.3'
+                    - '5.4'
                 composer-dependencies:
                     - 'highest'
                     - 'lowest'
