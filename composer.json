@@ -13,12 +13,11 @@
 	"require": {
 		"php": "^7.2",
 		"consistence/consistence": "^1.0|^2.0",
-		"consistence/consistence-doctrine": "^1.2|^2.0",
-		"doctrine/doctrine-bundle": "^1.3",
-		"symfony/config": "^3.0|^4.0",
+		"consistence/consistence-doctrine": "dev-dbal-3",
+		"doctrine/dbal": "^2.13.1|^3.0",
+		"symfony/config": "^3.0|~4.0.0|^4.1.4",
 		"symfony/dependency-injection": "^3.0|^4.0",
-		"symfony/http-kernel": "^3.0|^4.0",
-		"symfony/yaml": "^3.0|^4.0"
+		"symfony/http-kernel": "^3.0|^4.0"
 	},
 	"require-dev": {
 		"consistence/coding-standard": "3.10.1",
