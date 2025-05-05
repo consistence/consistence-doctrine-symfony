@@ -26,8 +26,8 @@ class Configuration
 
 	public function getConfigTreeBuilder(): TreeBuilder
 	{
-		$treeBuilder = new TreeBuilder();
-		$rootNode = $treeBuilder->root($this->rootNode);
+		$treeBuilder = new TreeBuilder($this->rootNode);
+		$rootNode = $treeBuilder->getRootNode();
 
 		$rootNode->children()->append($this->createEnumNode('enum'));
 
